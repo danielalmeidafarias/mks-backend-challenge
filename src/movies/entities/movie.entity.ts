@@ -20,7 +20,7 @@ export class MovieEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @ManyToOne(() => User, user => user.id)
+    @ManyToOne(() => UserEntity, user => user.id)
     @JoinColumn()
     user_id: string
 
