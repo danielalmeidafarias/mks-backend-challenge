@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movie } from './entities/movie.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Movie])],
+  imports: [TypeOrmModule.forFeature([Movie]), AuthModule],
   controllers: [MoviesController],
   exports: [MoviesService, MoviesRepository],
   providers: [MoviesService, MoviesRepository,JwtService]
