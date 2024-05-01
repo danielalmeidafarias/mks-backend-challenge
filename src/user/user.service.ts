@@ -30,7 +30,7 @@ export class UserService {
 
     const { refresh_token } = await this.authService.getRefreshToken(id, email)
 
-    return {refresh_token}
+    return { refresh_token }
   }
 
   async findOne(id: string) {

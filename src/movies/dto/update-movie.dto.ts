@@ -23,12 +23,12 @@ export class UpdateMovieDto extends PartialType(CreateMovieDto) {
 
     @IsDateString()
     release_date: string
-    
+
     @IsArray()
-    @ValidateNested({each: true})
+    @ValidateNested({ each: true })
     @Type(() => String)
     genre: string[]
 
     @IsIn(['G', 'PG', 'PG-13', 'R', 'NC-17'])
-    rating: string
+    rating: 'G' | 'PG' | 'PG-13' | 'R' | 'NC-17'
 }
