@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Movie } from 'src/movies/entities/movie.entity';
+import { Movie, MovieEntity } from 'src/movies/entities/movie.entity';
 import { User } from 'src/user/entities/user.entity';
 
 export const databaseConfig: TypeOrmModuleOptions = {
@@ -10,7 +10,7 @@ export const databaseConfig: TypeOrmModuleOptions = {
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   database: 'mks_backend_challenge',
-  entities: [User, Movie],
+  entities: [User, MovieEntity],
   synchronize: true,
   autoLoadEntities: true,
 }
