@@ -1,17 +1,14 @@
 import { Movie, MovieEntity } from "src/movies/entities/movie.entity"
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm"
 
-@Entity()
-export class User {
-    constructor(email: string, password: string, id?: string) {
-        this.email = email
-        this.password = password
-        
-        if(id) {
-            this.id = id
-        }
-    }
+export interface IUserContructorParameter {
+    email: string,
+    password: string
+    id?: string
+}
 
+@Entity()
+export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
@@ -30,4 +27,16 @@ export class User {
 
     @UpdateDateColumn()
     updated_at: Date
+}
+
+export class User extends UserEntity {
+    constructor({ email, password, id }: IUserContructorParameter) {
+        super()
+        this.email = email
+        this.password = password
+
+        if (id) {
+            this.id = id
+        }
+    }
 }
