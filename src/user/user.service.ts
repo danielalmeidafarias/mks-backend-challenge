@@ -26,7 +26,7 @@ export class UserService {
 
     const hashed_password = await this.authService.hashPassword(password)
 
-    const { id } = (await this.userRepository.create(new User(email, hashed_password))).identifiers[0]
+    const { id } = (await this.userRepository.create(new User({email, password: hashed_password}))).identifiers[0]
 
     const { refresh_token } = await this.authService.getRefreshToken(id, email)
 
@@ -59,7 +59,7 @@ export class UserService {
       password: password && hashed_password !== user.password ? hashed_password : user.password,
     }
 
-    const updated_user = new User(update_user_params.email, update_user_params.password, user.id)
+    const updated_user = new User({email: update_user_params.email, password: update_user_params.password, id: user.id})
 
     await this.userRepository.update(updated_user)
   }

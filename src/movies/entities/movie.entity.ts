@@ -1,4 +1,4 @@
-import { User } from "src/user/entities/user.entity"
+import { User, UserEntity } from "src/user/entities/user.entity"
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
@@ -6,7 +6,7 @@ export class Movie {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @ManyToOne(() => User, user => user.id)
+    @ManyToOne(() => UserEntity, user => user.id)
     @JoinColumn()
     user_id: string
 
