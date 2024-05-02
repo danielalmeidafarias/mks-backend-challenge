@@ -7,7 +7,7 @@ export interface IUserContructorParameter {
     id?: string
 }
 
-@Entity()
+@Entity({name: 'user'})
 export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string

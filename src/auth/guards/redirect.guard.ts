@@ -10,8 +10,6 @@ export class RedirectGuard implements CanActivate {
     constructor(@Inject(JwtService) private jwtService: JwtService) { }
 
     private getHeaders(request: Request) {
-        console.log(request.header('uthorization'))
-        console.log(request.headers)
         const { referer } = request.headers;
         return { referer };
     }
@@ -22,7 +20,7 @@ export class RedirectGuard implements CanActivate {
         const request: Request = context.switchToHttp().getRequest();
         const { referer } = this.getHeaders(request);
 
-        if (referer !== `${process.env.SERVER_HOST}/user`) {
+        if (referer !== `${process.env.SERVER_HOST}/user` && referer !== `${process.env.SERVER_HOST}/auth/sign-in`) {
             throw new UnauthorizedException();
         }
 

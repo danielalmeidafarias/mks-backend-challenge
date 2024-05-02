@@ -19,13 +19,13 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get()
-  findOne(@Body() access_token: string) {
+  findAll(@Body() access_token: string) {
     return this.userService.findAll();
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  findAll(@Param('id') id: string, @Body() access_token: string) {
+  findOne(@Param('id') id: string, @Body() access_token: string) {
     return this.userService.findOne(id);
   }
 
