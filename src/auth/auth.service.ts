@@ -2,10 +2,34 @@ import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } 
 import { JwtModuleOptions, JwtService } from "@nestjs/jwt";
 import { User } from "src/user/entities/user.entity";
 import { genSalt, hash, compare } from 'bcrypt'
+import { UserRepository } from "src/user/user.repository";
 
 @Injectable()
 export class AuthService {
-    constructor(@Inject(JwtService) private jwtService: JwtService) { }
+    constructor(@Inject(JwtService) private jwtService: JwtService, private userRepository: UserRepository) { }
+
+    async signIn(email: string, passoword: string) {
+        const user = await this.userRepository.findOneByEmail(email)
+
+        if (!user) {
+            throw new HttpException(`There is no account with this email ${email}`, HttpStatus.BAD_REQUEST)
+        }
+
+        await this.verifyPassword(passoword, user.password)
+
+        try {
+            const refresh_token = this.jwtService.sign({ id: user.id, email }, {
+                expiresIn: '1d',
+            })
+
+            return {
+                refresh_token
+            };
+        } catch (err) {
+            console.error(err)
+            throw new UnauthorizedException()
+        }
+    }
 
     async decodeToken(token: string) {
         const decodedToken = await this.jwtService.decode(token);
@@ -27,7 +51,8 @@ export class AuthService {
                 },
             )
             return { access_token }
-        } catch {
+        } catch (err){
+            console.error(err)
             throw new UnauthorizedException()
         }
     }

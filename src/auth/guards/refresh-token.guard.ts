@@ -22,8 +22,6 @@ export class RefreshTokenGuard implements CanActivate {
         const request: Request = context.switchToHttp().getRequest();
         const { refresh_token } = this.getRequestTokens(request);
 
-        console.log(refresh_token)
-
         if (!refresh_token) {
             throw new UnauthorizedException();
         }
