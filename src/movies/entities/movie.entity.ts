@@ -1,4 +1,4 @@
-import { User } from "src/user/entities/user.entity"
+import {  UserEntity } from "src/user/entities/user.entity"
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
 export interface IMovieContructorParams {
@@ -15,7 +15,7 @@ export interface IMovieContructorParams {
     id?: string
 }
 
-@Entity()
+@Entity({name: 'movie'})
 export class MovieEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string
