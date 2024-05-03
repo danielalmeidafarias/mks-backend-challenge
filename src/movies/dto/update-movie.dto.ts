@@ -1,9 +1,15 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateMovieDto } from './create-movie.dto';
-import { IsArray, IsDateString, IsIn, IsNumberString, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { IsArray, IsDateString, IsIn, IsJWT, IsNumberString, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateMovieDto extends PartialType(CreateMovieDto) {
+    @IsJWT()
+    access_token: string
+
+    @IsUUID()
+    movie_id: string
+
     @IsString()
     @MaxLength(50)
     title: string
@@ -11,6 +17,10 @@ export class UpdateMovieDto extends PartialType(CreateMovieDto) {
     @IsString()
     @MaxLength(400)
     original_title: string
+
+    @IsString()
+    @MaxLength(400)
+    synopsis: string
 
     @IsString()
     language: string
@@ -25,8 +35,7 @@ export class UpdateMovieDto extends PartialType(CreateMovieDto) {
     release_date: string
 
     @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => String)
+    @IsString({each: true})
     genre: string[]
 
     @IsIn(['G', 'PG', 'PG-13', 'R', 'NC-17'])

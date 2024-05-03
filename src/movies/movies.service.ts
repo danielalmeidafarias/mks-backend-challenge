@@ -41,19 +41,23 @@ export class MoviesService {
     return id;
   }
 
-  findAll() {
-    return `This action returns all movies`;
+  async findAll() {
+    return await this.movieRepository.getAll()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  async findOne(id: string) {
+    return await this.movieRepository.getOne(id)
   }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
+  async findUsersMovies(user_id: string) {
+
+  }
+
+  async update(id: number, updateMovieDto: UpdateMovieDto) {
     return `This action updates a #${id} movie`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} movie`;
   }
 }

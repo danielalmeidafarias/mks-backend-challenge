@@ -16,14 +16,14 @@ export class MoviesController {
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll() {
+  findAll(@Body() access_token: string) {
     return this.moviesService.findAll();
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.moviesService.findOne(+id);
+  findOne(@Param('id') id: string, @Body() access_token: string) {
+    return this.moviesService.findOne(id);
   }
 
   @UseGuards(AuthGuard)

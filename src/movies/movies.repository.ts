@@ -18,9 +18,32 @@ export class MoviesRepository {
 
     async delete() { }
 
-    async getAll() { }
+    async getAll() {
+        try {
+            return await this.dataSource.getRepository(MovieEntity).createQueryBuilder('movies').getMany()
+        } catch (err) {
+            console.error(err)
+            throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
-    async getOne() { }
+    async getOne(movie_id: string) {
+        try {
+            return this.dataSource.getRepository(MovieEntity).createQueryBuilder('movie').where('movie.id = :id', { id: movie_id }).getOne() ?? null
+        } catch (err) {
+            console.error(err)
+            throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async getUsersMovies(userId: string) {
+        try {
+            return this.dataSource.getRepository(MovieEntity).createQueryBuilder('movies').where('movie.userId = :id', { userId }).getMany()
+        } catch (err) {
+            console.error(err)
+            throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
     async search() { }
 }   
