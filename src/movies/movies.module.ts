@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { MoviesController } from './movies.controller';
 import { AuthModule } from 'src/auth/auth.module';
@@ -9,7 +9,7 @@ import { Movie } from './entities/movie.entity';
 import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Movie]), AuthModule, UserModule],
+  imports: [TypeOrmModule.forFeature([Movie]), AuthModule, forwardRef(() => UserModule) ],
   controllers: [MoviesController],
   exports: [MoviesService, MoviesRepository],
   providers: [MoviesService, MoviesRepository,JwtService]
