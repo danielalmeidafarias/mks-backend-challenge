@@ -28,8 +28,7 @@ export class CreateMovieDto {
     release_date: string
 
     @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => String)
+    @IsString({each: true})
     genre: string[]
 
     @IsIn(['G', 'PG', 'PG-13', 'R', 'NC-17'])

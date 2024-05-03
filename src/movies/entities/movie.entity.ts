@@ -2,7 +2,7 @@ import {  UserEntity } from "src/user/entities/user.entity"
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
 export interface IMovieContructorParams {
-    user_id: string,
+    user: UserEntity,
     title: string,
     original_title: string,
     language: string,
@@ -22,7 +22,7 @@ export class MovieEntity {
 
     @ManyToOne(() => UserEntity, user => user.id)
     @JoinColumn()
-    user_id: string
+    user: UserEntity
 
     @Column({ length: 50 })
     title: string
@@ -60,12 +60,12 @@ export class MovieEntity {
 
 export class Movie extends MovieEntity {
     constructor(
-        { title, original_title, language, original_language, user_id, synopsis, duration_in_minutes, release_date, genre, rating, id }: IMovieContructorParams
+        { title, original_title, language, original_language, user, synopsis, duration_in_minutes, release_date, genre, rating, id }: IMovieContructorParams
     ) {
         super()
 
         this.title = title
-        this.user_id = user_id
+        this.user = user
         this.synopsis = synopsis
         this.original_title = original_title
         this.language = language
