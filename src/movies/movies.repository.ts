@@ -38,7 +38,7 @@ export class MoviesRepository {
 
     async getUsersMovies(userId: string) {
         try {
-            return this.dataSource.getRepository(MovieEntity).createQueryBuilder('movies').where('movie.userId = :id', { userId }).getMany()
+            return this.dataSource.getRepository(MovieEntity).createQueryBuilder('movie').where('movie.userId = :userId', { userId }).getMany() ?? []
         } catch (err) {
             console.error(err)
             throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)

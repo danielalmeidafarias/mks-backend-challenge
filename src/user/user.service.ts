@@ -5,12 +5,14 @@ import { User } from './entities/user.entity';
 import { UserRepository } from "./user.repository";
 import { AuthService } from 'src/auth/auth.service';
 import { DeleteUserDTO } from './dto/delete-user.dto';
+import { MoviesRepository } from 'src/movies/movies.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(UserRepository) private userRepository: UserRepository,
     @Inject(AuthService) private authService: AuthService,
+    @Inject(MoviesRepository) private moviesRepository: MoviesRepository
   ) { }
 
   private async verifyThereIsNoUserWithEmail(email: string) {
@@ -26,7 +28,7 @@ export class UserService {
 
     const hashed_password = await this.authService.hashPassword(password)
 
-    const { id } = (await this.userRepository.create(new User({email, password: hashed_password}))).identifiers[0]
+    const { id } = (await this.userRepository.create(new User({ email, password: hashed_password }))).identifiers[0]
 
     const { refresh_token } = await this.authService.getRefreshToken(id, email)
 
@@ -36,8 +38,10 @@ export class UserService {
   async findOne(id: string) {
     const user = await this.userRepository.findOneById(id)
 
+    const users_movies = await this.moviesRepository.getUsersMovies(id)
+
     // Adicionar depois os filmes que esse usuário registrou
-    return user
+    return { user, users_movies }
   }
 
 
@@ -59,7 +63,7 @@ export class UserService {
       password: password && hashed_password !== user.password ? hashed_password : user.password,
     }
 
-    const updated_user = new User({email: update_user_params.email, password: update_user_params.password, id: user.id})
+    const updated_user = new User({ email: update_user_params.email, password: update_user_params.password, id: user.id })
 
     await this.userRepository.update(updated_user)
   }
