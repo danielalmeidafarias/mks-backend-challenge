@@ -35,7 +35,13 @@ export class MoviesRepository {
         }
     }
 
-    async delete() { }
+    async delete(movie_id: string) {
+        try {
+            return await this.dataSource.getRepository(MovieEntity).createQueryBuilder('movie').delete().where('movie.id = :id', { id: movie_id }).execute()
+        } catch (err) {
+            throw new HttpException('An error occurred when deleting the movie, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
     async getAll() {
         try {

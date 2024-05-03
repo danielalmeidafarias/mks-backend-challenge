@@ -46,11 +46,11 @@ export class MoviesService {
     return await this.movieRepository.getAll()
   }
 
-  async findOne(id: string) {
-    return await this.movieRepository.getOne(id)
+  async findOne(movie_id: string) {
+    return await this.movieRepository.getOne(movie_id)
   }
 
-  async update({ access_token, duration_in_minutes, genre, language, movie_id, original_language, original_title, rating, release_date, synopsis, title }: UpdateMovieDto) {
+  async update(movie_id: string, { access_token, duration_in_minutes, genre, language, original_language, original_title, rating, release_date, synopsis, title }: Omit<UpdateMovieDto, 'movie_id'>) {
 
     const { id: user_id } = await this.authService.decodeToken(access_token)
 
@@ -58,7 +58,7 @@ export class MoviesService {
 
     const movie = await this.movieRepository.getOne(movie_id)
 
-    if (!movie || movie.user_id !== user_id) { 
+    if (!movie || movie.user_id !== user_id) {
       throw new UnauthorizedException()
     }
 
@@ -82,7 +82,26 @@ export class MoviesService {
 
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} movie`;
+  async remove(movie_id: string, access_token: string) {
+    console.log(movie_id)
+    const { id: user_id } = await this.authService.decodeToken(access_token)
+
+    const user = await this.userRepository.findOneById(user_id)
+
+    console.log({user})
+
+    const movie = await this.movieRepository.getOne(movie_id)
+
+    console.log({movie})
+
+    console.log({user_id})
+
+    if (!movie || movie.user_id !== user_id) {
+      throw new UnauthorizedException()
+    }
+
+    await this.movieRepository.delete(movie_id)
+
+    return
   }
 }
