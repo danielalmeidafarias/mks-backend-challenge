@@ -19,7 +19,7 @@ export class UserEntity {
     @Column()
     password: string
 
-    @OneToMany(() => MovieEntity, movie => movie.user_id)
+    @OneToMany(() => MovieEntity, movie => movie.user)
     movies: MovieEntity[]
 
     @CreateDateColumn()
