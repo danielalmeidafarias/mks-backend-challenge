@@ -8,6 +8,9 @@ import { UserRepository } from "src/user/user.repository";
 export class AuthService {
     constructor(@Inject(JwtService) private jwtService: JwtService, private userRepository: UserRepository) { }
 
+    // Criar autenticação de email para a criação de conta
+    // Adicionar recuperação de senha
+
     async signIn(email: string, passoword: string) {
         const user = await this.userRepository.findOneByEmail(email)
 

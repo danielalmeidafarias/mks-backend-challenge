@@ -43,9 +43,20 @@ export class MoviesRepository {
         }
     }
 
+    // Adicionar sistema de likes
+    // Cada like deverá ter o id do usuário relacionado
+
+    // Nessa rota adicionar filtros(olhar projeto cadastro produtos)
+    // Query params opcionais
+    // - rating
+    // - user_id (será desncessário a rota de movies do usuário)
+    // - title
+    // - language
+    // - genre
+
     async getAll() {
         try {
-            return await this.dataSource.getRepository(MovieEntity).createQueryBuilder('movies').getMany()
+            return await this.dataSource.getRepository(MovieEntity).createQueryBuilder('movie').orderBy('movie.created_at', 'DESC').getMany()
         } catch (err) {
             console.error(err)
             throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -70,5 +81,9 @@ export class MoviesRepository {
         }
     }
 
-    async search() { }
+    async search() { 
+
+
+
+    }
 }   

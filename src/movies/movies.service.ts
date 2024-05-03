@@ -82,6 +82,12 @@ export class MoviesService {
 
   }
 
+  // Nas rotas de create e updare retornar o movie
+  // Em outras rotas como a delete retornar apenas uma mensagem de confirmação
+
+  // Fazer a verificação de mudanças
+  // Se possível facilidar o trabalho do banco de dados modificando apenas onde necessário
+
   async remove(movie_id: string, access_token: string) {
     console.log(movie_id)
     const { id: user_id } = await this.authService.decodeToken(access_token)

@@ -43,6 +43,9 @@ export class UserService {
     return { user, users_movies }
   }
 
+  // Retonar usuário nas rotas que for necessário
+  // Retornar mensagens de confimação da requisição
+
 
   async findAll() {
     const users = await this.userRepository.findAll()
