@@ -10,31 +10,31 @@ export class MoviesController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  async create(@Body() createMovieDto: CreateMovieDto) {
+    return await this.moviesService.create(createMovieDto);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Body() access_token: string) {
+  async findAll(@Body() access_token: string) {
     return this.moviesService.findAll();
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string, @Body() access_token: string) {
+  async findOne(@Param('id') id: string, @Body() access_token: string) {
     return this.moviesService.findOne(id);
   }
 
   @UseGuards(AuthGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMovieDto: UpdateMovieDto) {
-    return this.moviesService.update(+id, updateMovieDto);
+  @Patch()
+  async update(@Body() updateMovieDto: UpdateMovieDto) {
+    return this.moviesService.update(updateMovieDto);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.moviesService.remove(+id);
   }
 }

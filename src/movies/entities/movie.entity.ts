@@ -24,6 +24,9 @@ export class MovieEntity {
     @JoinColumn()
     user: UserEntity
 
+    @Column()
+    user_id: string
+
     @Column({ length: 50 })
     title: string
 
@@ -66,6 +69,7 @@ export class Movie extends MovieEntity {
 
         this.title = title
         this.user = user
+        this.user_id = user.id
         this.synopsis = synopsis
         this.original_title = original_title
         this.language = language

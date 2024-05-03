@@ -40,7 +40,6 @@ export class UserService {
 
     const users_movies = await this.moviesRepository.getUsersMovies(id)
 
-    // Adicionar depois os filmes que esse usuário registrou
     return { user, users_movies }
   }
 

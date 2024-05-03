@@ -6,6 +6,7 @@ import { Movie, MovieEntity } from './entities/movie.entity';
 import { MoviesRepository } from './movies.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { UserRepository } from 'src/user/user.repository';
+import { PartialType } from '@nestjs/mapped-types';
 
 @Injectable()
 export class MoviesService {
@@ -34,7 +35,7 @@ export class MoviesService {
         release_date,
         synopsis,
         title,
-        user
+        user,
       }
     ))).identifiers[0]
 
@@ -49,12 +50,36 @@ export class MoviesService {
     return await this.movieRepository.getOne(id)
   }
 
-  async findUsersMovies(user_id: string) {
+  async update({ access_token, duration_in_minutes, genre, language, movie_id, original_language, original_title, rating, release_date, synopsis, title }: UpdateMovieDto) {
 
-  }
+    const { id: user_id } = await this.authService.decodeToken(access_token)
 
-  async update(id: number, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} movie`;
+    const user = await this.userRepository.findOneById(user_id)
+
+    const movie = await this.movieRepository.getOne(movie_id)
+
+    if (!movie || movie.user_id !== user_id) { 
+      throw new UnauthorizedException()
+    }
+
+    const update_movie = new Movie({
+      title: title ? title : movie.title,
+      original_title: original_title ? original_title : movie.original_title,
+      language: language ? language : movie.language,
+      original_language: original_language ? original_language : movie.original_language,
+      duration_in_minutes: duration_in_minutes ? duration_in_minutes : duration_in_minutes,
+      genre: genre ? genre : movie.genre,
+      rating: rating ? rating : movie.rating,
+      release_date: release_date ? release_date : release_date,
+      synopsis: synopsis ? synopsis : movie.synopsis,
+      user,
+      id: movie.id
+    })
+
+    await this.movieRepository.update(update_movie)
+
+    return
+
   }
 
   async remove(id: number) {
