@@ -17,7 +17,7 @@ export class UserRepository {
 
     async findOneByEmail(email: string) {
         try {
-            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user').where("user.email = :email", { email }).getOne()
+            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user_by_email').where("user.email = :email", { email }).getOne()
             return user
         } catch (err) {
             throw new HttpException('An error occured when trying to find the user, please try again later', HttpStatus.BAD_REQUEST)
@@ -26,11 +26,12 @@ export class UserRepository {
 
     async findOneById(id: string) {
         try {
-            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user').select('user.id').from(User, 'user').where("user.id = :id", { id }).getOne()
+            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user_by_id').select('user.id').from(UserEntity, 'user').where("user.id = :id", { id }).getOne()
+                
             return user
         } catch (err) {
             console.error(err)
-            throw new HttpException('The access_token is invalid', HttpStatus.BAD_REQUEST)
+            throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -39,7 +40,7 @@ export class UserRepository {
             const users = await this.dataSource.getRepository(UserEntity)
                 .createQueryBuilder('users')
                 .select('user.id')
-                .from(User, 'user')
+                .from(UserEntity, 'user')
                 .orderBy('user.created_at', 'DESC')
                 .getMany()
             return users
