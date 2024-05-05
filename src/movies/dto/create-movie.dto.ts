@@ -1,5 +1,6 @@
-import { Type } from "class-transformer";
-import { IsArray, IsDateString, IsIBAN, IsIn, IsJWT, IsNumberString, IsString, MaxLength, ValidateNested } from "class-validator";
+import { IsArray, IsDateString, IsIBAN, IsIn, IsJWT, IsNumberString, IsString, MaxLength, Validate, ValidateNested } from "class-validator";
+import { IsLanguageCode } from "./decorators/isLanguageCode";
+import { IsCountryCode } from "./decorators/isCountryCode";
 
 export class CreateMovieDto {
     @IsJWT()
@@ -15,11 +16,14 @@ export class CreateMovieDto {
     @IsString()
     original_title: string
 
-    @IsString()
-    language: string
+    @Validate(IsLanguageCode)
+    language_code: string
 
-    @IsString()
-    original_language: string
+    @Validate(IsLanguageCode)
+    original_language_code: string
+
+    @Validate(IsCountryCode)
+    country_code: string
 
     @IsNumberString()
     duration_in_minutes: string
