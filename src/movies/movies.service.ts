@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Repository } from 'typeorm';
@@ -42,7 +42,7 @@ export class MoviesService {
       }
     ))).identifiers[0]
 
-    return id;
+    return await this.findOne(id);
   }
 
   async findAll() {
@@ -61,11 +61,15 @@ export class MoviesService {
 
     const movie = await this.movieRepository.getOne(movie_id)
 
-    if (!movie || movie.user_id !== user_id) {
+    if(!movie) {
+      throw new HttpException('movie_id does not correspond to any movie', HttpStatus.BAD_REQUEST)
+    }
+
+    if (movie.user_id !== user_id) {
       throw new UnauthorizedException()
     }
 
-    const update_movie = new Movie({
+    const updated_movie = new Movie({
       title: title ? title : movie.title,
       original_title: original_title ? original_title : movie.original_title,
       language_code: language_code ? language_code : movie.language_code,
@@ -80,9 +84,9 @@ export class MoviesService {
       id: movie.id
     })
 
-    await this.movieRepository.update(update_movie)
+    await this.movieRepository.update(updated_movie)
 
-    return
+    return await this.movieRepository.getOne(movie_id)
 
   }
 
@@ -106,6 +110,6 @@ export class MoviesService {
 
     await this.movieRepository.delete(movie_id)
 
-    return
+    return "Movie deleted!" 
   }
 }
