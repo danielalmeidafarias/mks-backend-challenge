@@ -17,7 +17,7 @@ export class MoviesRepository {
     }
   }
 
-  async update(movie: Movie) {
+  async update(movie: Partial<Movie>) {
     try {
       await this.dataSource
         .getRepository(MovieEntity)
