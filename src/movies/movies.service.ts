@@ -17,7 +17,7 @@ export class MoviesService {
   ) { }
 
   async create(createMovieDto: CreateMovieDto) {
-    const { access_token, title, original_title, language, original_language, duration_in_minutes, genre, rating, release_date, synopsis } = createMovieDto
+    const { access_token, title, original_title, language_code, original_language_code,country_code, duration_in_minutes, genre, rating, release_date, synopsis } = createMovieDto
 
     const { id: user_id } = await this.authService.decodeToken(access_token)
     const user = await this.userRepository.findOneById(user_id)
@@ -29,9 +29,12 @@ export class MoviesService {
     const { id } = (await this.movieRepository.create(new Movie(
       {
         duration_in_minutes,
-        genre, language,
-        original_language,
-        original_title, rating,
+        genre, 
+        language_code,
+        original_language_code,
+        country_code,
+        original_title,
+        rating,
         release_date,
         synopsis,
         title,
@@ -50,7 +53,7 @@ export class MoviesService {
     return await this.movieRepository.getOne(movie_id)
   }
 
-  async update(movie_id: string, { access_token, duration_in_minutes, genre, language, original_language, original_title, rating, release_date, synopsis, title }: Omit<UpdateMovieDto, 'movie_id'>) {
+  async update(movie_id: string, { access_token, duration_in_minutes, genre, language_code, original_language_code, country_code,original_title, rating, release_date, synopsis, title }: Omit<UpdateMovieDto, 'movie_id'>) {
 
     const { id: user_id } = await this.authService.decodeToken(access_token)
 
@@ -65,8 +68,9 @@ export class MoviesService {
     const update_movie = new Movie({
       title: title ? title : movie.title,
       original_title: original_title ? original_title : movie.original_title,
-      language: language ? language : movie.language,
-      original_language: original_language ? original_language : movie.original_language,
+      language_code: language_code ? language_code : movie.language_code,
+      original_language_code: original_language_code ? original_language_code : movie.original_language_code,
+      country_code: country_code ? country_code : movie.country_code,
       duration_in_minutes: duration_in_minutes ? duration_in_minutes : duration_in_minutes,
       genre: genre ? genre : movie.genre,
       rating: rating ? rating : movie.rating,
