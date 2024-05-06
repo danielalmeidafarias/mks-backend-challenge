@@ -9,7 +9,7 @@ import { AuthController } from "./auth.controller";
 import { RedirectGuard } from "./guards/redirect.guard";
 
 @Module({
-    imports: [JwtModule.register(auth_config), forwardRef(() => UserModule) ],
+    imports: [JwtModule.register(auth_config), forwardRef(() => UserModule)],
     exports: [AuthGuard, AuthService],
     providers: [AuthGuard, AuthService, RedirectGuard],
     controllers: [AuthController]
