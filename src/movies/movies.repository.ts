@@ -1,10 +1,11 @@
 import { DataSource, Repository } from 'typeorm';
 import { Movie, MovieEntity } from './entities/movie.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { SearchMovieDTO } from './dto/search-movie.dto';
 
 @Injectable()
 export class MoviesRepository {
-  constructor(private dataSource: DataSource) {}
+  constructor(private dataSource: DataSource) { }
 
   async create(movie: Movie) {
     try {
@@ -84,23 +85,37 @@ export class MoviesRepository {
     }
   }
 
-  async getUsersMovies(userId: string) {
+  async search({ user_id, country_code, genre, language_code, rating, title }: Omit<SearchMovieDTO, 'access_token'>) {
     try {
-      return (
-        this.dataSource
-          .getRepository(MovieEntity)
-          .createQueryBuilder('movie')
-          .where('movie.userId = :userId', { userId })
-          .getMany() ?? []
-      );
+      let functionString = `const moviesPromise = dataSource.getRepository(MovieEntity).createQueryBuilder('movie')`
+
+      if (user_id) {
+        functionString = functionString.concat(`.where('movie.user_id = :user_id', { user_id: '${user_id}' })`)
+      }
+      if (title) {
+        functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('title ~* :title', { title: '${title}' })`)
+      }
+      if (language_code) {
+        functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.language_code = :language_code', { language_code: '${language_code}' })`)
+      }
+      if (country_code) {
+        functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.country_code = :country_code', { country_code: '${country_code}' })`)
+      }
+      if (genre) {
+        functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.genre = :genre', { genre: '${genre}' })`)
+      }
+      if (rating) {
+        functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.rating = :rating', { rating: '${rating}' })`)
+      }
+
+      const movieSearchPromise = new Function('dataSource','MovieEntity', functionString.concat('.getMany() \n return moviesPromise'))
+
+      return await movieSearchPromise(this.dataSource, MovieEntity)
+
     } catch (err) {
-      console.error(err);
-      throw new HttpException(
-        'Something went wrong, please try again later',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      console.error(err)
+      throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
-  async search() {}
 }

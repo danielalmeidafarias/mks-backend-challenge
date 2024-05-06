@@ -13,6 +13,7 @@ import { MoviesRepository } from './movies.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { UserRepository } from 'src/user/user.repository';
 import { PartialType } from '@nestjs/mapped-types';
+import { SearchMovieDTO } from './dto/search-movie.dto';
 
 @Injectable()
 export class MoviesService {
@@ -20,7 +21,7 @@ export class MoviesService {
     @Inject(MoviesRepository) private movieRepository: MoviesRepository,
     @Inject(AuthService) private authService: AuthService,
     @Inject(UserRepository) private userRepository: UserRepository,
-  ) {}
+  ) { }
 
   async create(createMovieDto: CreateMovieDto) {
     const {
@@ -65,8 +66,8 @@ export class MoviesService {
     return await this.findOne(id);
   }
 
-  async findAll() {
-    return await this.movieRepository.getAll();
+  async search(moviesFilter: Omit<SearchMovieDTO, 'access_token'>) {
+    return await this.movieRepository.search(moviesFilter)
   }
 
   async findOne(movie_id: string) {
@@ -93,16 +94,16 @@ export class MoviesService {
     }
 
     let updated_movie: Partial<Movie> = {
-      id: movie_id 
+      id: movie_id
     }
 
-    for(const prop in updateMovieDto) {
-      if(updateMovieDto[prop] !== movie[prop] && prop !== 'access_token') {
+    for (const prop in updateMovieDto) {
+      if (updateMovieDto[prop] !== movie[prop] && prop !== 'access_token') {
         updated_movie[prop] = updateMovieDto[prop]
       }
     }
 
-    if(Object.keys(updated_movie).length < 2) {
+    if (Object.keys(updated_movie).length < 2) {
       throw new HttpException('None change was requested', HttpStatus.BAD_REQUEST)
     }
 

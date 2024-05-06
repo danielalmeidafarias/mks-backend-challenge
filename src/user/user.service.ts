@@ -38,7 +38,7 @@ export class UserService {
   async findOne(id: string) {
     const user = await this.userRepository.findOneById(id)
 
-    const users_movies = await this.moviesRepository.getUsersMovies(id)
+    const users_movies = await this.moviesRepository.search({ user_id: user.id, country_code: null, genre: null, language_code: null, rating: null, title: null, })
 
     return { user, users_movies }
   }
