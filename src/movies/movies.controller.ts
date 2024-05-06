@@ -38,10 +38,4 @@ export class MoviesController {
   async remove(@Param('id', new ParseUUIDPipe()) movie_id: string, @Body() { access_token }: Pick<DeleteMovieDTO, 'access_token'>) {
     return this.moviesService.remove(movie_id, access_token);
   }
-
-  // @UseGuards(AuthGuard)
-  // @Delete(':id')
-  // async remove(@Param('id') { movie_id }: Pick<DeleteMovieDTO, 'movie_id'>, @Body() { access_token }: Pick<DeleteMovieDTO, 'access_token'>) {
-  //   return this.moviesService.remove(movie_id, access_token);
-  // }
 }

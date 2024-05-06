@@ -1,7 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateMovieDto } from './create-movie.dto';
-import { IsArray, IsDateString, IsIn, IsJWT, IsNumberString, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsArray, IsDateString, IsIn, IsJWT, IsNumberString, IsString, IsUUID, MaxLength, Validate, ValidateNested } from 'class-validator';
+import { IsCountryCode } from './decorators/isCountryCode';
+import { IsLanguageCode } from './decorators/isLanguageCode';
 
 export class UpdateMovieDto extends PartialType(CreateMovieDto) {
     @IsJWT()
@@ -22,11 +23,14 @@ export class UpdateMovieDto extends PartialType(CreateMovieDto) {
     @MaxLength(400)
     synopsis: string
 
-    @IsString()
-    language: string
+    @Validate(IsLanguageCode)
+    language_code: string
 
-    @IsString()
-    original_language: string
+    @Validate(IsLanguageCode)
+    original_language_code: string
+
+    @Validate(IsCountryCode)
+    country_code: string
 
     @IsNumberString()
     duration_in_minutes: string
