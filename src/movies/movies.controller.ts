@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Inject, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Inject, ParseUUIDPipe, Query } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { DeleteMovieDTO } from './dto/delete-movie.dto';
+import { SearchMovieDTO } from './dto/search-movie.dto';
 
 @Controller('movies')
 export class MoviesController {
@@ -17,8 +18,8 @@ export class MoviesController {
 
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Body() access_token: string) {
-    return this.moviesService.findAll();
+  async search(@Body() { access_token }: Pick<SearchMovieDTO, 'access_token'>, @Query() moviesFilter: Omit<SearchMovieDTO, 'access_token'>) {
+    return this.moviesService.search(moviesFilter);
   }
 
   @UseGuards(AuthGuard)
