@@ -6,6 +6,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { DeleteUserDTO } from './dto/delete-user.dto';
 import { Request, Response } from 'express';
+import { SearchUserDTO } from './dto/search-user.dto';
+import { GetUserDetailsDTO } from './dto/get-user-details.dto';
 
 @Controller('user')
 export class UserController {
@@ -13,14 +15,20 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-    const {refresh_token} = await this.userService.create(createUserDto)
+    const { refresh_token } = await this.userService.create(createUserDto)
     res.status(302).redirect(`/auth/get-token/?refresh_token=${refresh_token}`)
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Body() access_token: string) {
-    return this.userService.findAll();
+  search(@Body() { access_token }: Pick<SearchUserDTO, 'access_token'>, @Query() { nickname }: Pick<SearchUserDTO, 'nickname'>) {
+    return this.userService.findAll(nickname);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/details')
+  getDetails(@Body() { access_token }: GetUserDetailsDTO) {
+    return this.userService.getUserDetails(access_token);
   }
 
   @UseGuards(AuthGuard)
