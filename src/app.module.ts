@@ -19,7 +19,7 @@ import { redisStore } from 'cache-manager-redis-yet';
     TypeOrmModule.forRoot(databaseConfig),
     CacheModule.register({
       store: redisStore,
-      ttl: 10000,
+      ttl: 100000,
       isGlobal: true
     },),
 

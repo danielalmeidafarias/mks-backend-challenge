@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Res, Req, HttpException, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Res, Req, HttpException, HttpStatus, ParseUUIDPipe, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,6 +8,7 @@ import { DeleteUserDTO } from './dto/delete-user.dto';
 import { Request, Response } from 'express';
 import { SearchUserDTO } from './dto/search-user.dto';
 import { GetUserDetailsDTO } from './dto/get-user-details.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('user')
 export class UserController {
@@ -21,17 +22,20 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get()
+  @UseInterceptors(CacheInterceptor)
   search(@Body() { access_token }: Pick<SearchUserDTO, 'access_token'>, @Query() { nickname }: Pick<SearchUserDTO, 'nickname'>) {
     return this.userService.findAll(nickname);
   }
 
   @UseGuards(AuthGuard)
+  @UseInterceptors(CacheInterceptor)
   @Get('/details')
   getDetails(@Body() { access_token }: GetUserDetailsDTO) {
     return this.userService.getUserDetails(access_token);
   }
 
   @UseGuards(AuthGuard)
+  @UseInterceptors(CacheInterceptor)
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe()) id: string, @Body() access_token: string) {
     return this.userService.findOne(id);
