@@ -16,11 +16,11 @@ export class UpdateMovieDto extends PartialType(CreateMovieDto) {
     title: string
 
     @IsString()
-    @MaxLength(400)
+    @MaxLength(50)
     original_title: string
 
     @IsString()
-    @MaxLength(400)
+    @MaxLength(700)
     synopsis: string
 
     @Validate(IsLanguageCode)
