@@ -25,7 +25,7 @@ export class MoviesRepository {
         .createQueryBuilder('movies')
         .where('movie.id = :id', { id: movie.id })
         .update(movie)
-        .execute(); 
+        .execute();
     } catch (err) {
       console.error(err);
       throw new HttpException(
@@ -85,16 +85,20 @@ export class MoviesRepository {
       if (country_code) {
         functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.country_code = :country_code', { country_code: '${country_code}' })`)
       }
-      if (genre) {
-        functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.genre = :genre', { genre: '${genre}' })`)
-      }
       if (rating) {
         functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.rating = :rating', { rating: '${rating}' })`)
       }
 
-      const movieSearchPromise = new Function('dataSource','MovieEntity', functionString.concat('.getMany() \n return moviesPromise'))
+      const movieSearchPromise = new Function('dataSource', 'MovieEntity', functionString.concat('.getMany() \n return moviesPromise'))
 
-      return await movieSearchPromise(this.dataSource, MovieEntity)
+      const movies: MovieEntity[] = await movieSearchPromise(this.dataSource, MovieEntity)
+
+      if (genre) {
+        return movies.filter(movie => movie.genre.includes(genre))
+      } else {
+        return movies
+      }
+
 
     } catch (err) {
       console.error(err)

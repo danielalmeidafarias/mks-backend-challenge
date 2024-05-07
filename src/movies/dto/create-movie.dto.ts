@@ -6,13 +6,15 @@ export class CreateMovieDto {
     @IsJWT()
     access_token: string
 
+    @MaxLength(50)
     @IsString()
     title: string
 
     @IsString()
-    @MaxLength(400)
+    @MaxLength(700)
     synopsis: string
 
+    @MaxLength(50)
     @IsString()
     original_title: string
 
