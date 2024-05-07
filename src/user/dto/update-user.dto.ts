@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
-import { IsEmail, IsJWT, IsOptional, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsJWT, IsOptional, IsString, IsStrongPassword } from 'class-validator';
 
 export class UpdateUserDto {
     @IsJWT()
@@ -10,7 +10,14 @@ export class UpdateUserDto {
     @IsOptional()
     email?: string
 
+    @IsOptional()
+    @IsString()
+    nickname?: string
+
     @IsStrongPassword()
     @IsOptional()
+    new_password?: string
+
+    @IsString()
     password?: string
 }

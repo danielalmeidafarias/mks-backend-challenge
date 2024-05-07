@@ -25,7 +25,7 @@ export class MoviesRepository {
         .createQueryBuilder('movies')
         .where('movie.id = :id', { id: movie.id })
         .update(movie)
-        .execute();
+        .execute(); 
     } catch (err) {
       console.error(err);
       throw new HttpException(
@@ -46,22 +46,6 @@ export class MoviesRepository {
     } catch (err) {
       throw new HttpException(
         'An error occurred when deleting the movie, please try again later',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async getAll() {
-    try {
-      return await this.dataSource
-        .getRepository(MovieEntity)
-        .createQueryBuilder('movie')
-        .orderBy('movie.created_at', 'DESC')
-        .getMany();
-    } catch (err) {
-      console.error(err);
-      throw new HttpException(
-        'Something went wrong, please try again later',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -117,5 +101,4 @@ export class MoviesRepository {
       throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
-
 }

@@ -14,6 +14,8 @@ export class AuthService {
     async signIn(email: string, passoword: string) {
         const user = await this.userRepository.findOneByEmail(email)
 
+        console.log(user)
+
         if (!user) {
             throw new HttpException(`There is no account with this email ${email}`, HttpStatus.BAD_REQUEST)
         }
@@ -80,7 +82,7 @@ export class AuthService {
     }
 
     async verifyPassword(password: string, database_hashed_password: string) {
-        if (!compare(password, database_hashed_password)) {
+        if (! await compare(password, database_hashed_password)) {
             throw new UnauthorizedException()
         }
     }
