@@ -114,7 +114,6 @@ export class MoviesService {
   }
 
   async remove(movie_id: string, access_token: string) {
-    console.log(movie_id);
     const { id: user_id } = await this.authService.decodeToken(access_token);
 
     const user = await this.userRepository.findOneById(user_id);
