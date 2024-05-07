@@ -8,8 +8,22 @@ import { UserModule } from './user/user.module';
 import { MoviesModule } from './movies/movies.module';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from './auth/auth.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisClientOptions } from 'redis';
+import { redisStore } from 'cache-manager-redis-yet';
 @Module({
-  imports: [UserModule, MoviesModule, AuthModule, TypeOrmModule.forRoot(databaseConfig)]
+  imports: [
+    UserModule,
+    MoviesModule,
+    AuthModule,
+    TypeOrmModule.forRoot(databaseConfig),
+    CacheModule.register({
+      store: redisStore,
+      ttl: 10000,
+      isGlobal: true
+    },),
+
+  ]
 })
 
 export class AppModule { }
