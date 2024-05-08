@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsJWT, IsUUID } from "class-validator";
 
 export class GetMovieBodyDTO {
-    @ApiProperty()
+    @ApiProperty({ type: 'jwt_token' })
     @IsJWT()
     access_token: string
 }

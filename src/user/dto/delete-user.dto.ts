@@ -3,11 +3,11 @@ import { IsEmail, IsJWT, IsString } from 'class-validator';
 import { UpdateUserDto } from './update-user.dto';
 
 export class DeleteUserDTO {
-    @ApiProperty()
+    @ApiProperty({type: 'jwt_token'})
     @IsJWT()
     access_token: string
     
-    @ApiProperty()
+    @ApiProperty({type: "string(current password)"})
     @IsString()
     password: string
 }

@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { DeleteMovieBodyDTO } from './dto/delete-movie.dto';
 import { SearchMovieBodyDTO, SearchMovieQueryDTO } from './dto/search-movie.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { ApiBody, ApiOAuth2, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { GetMovieBodyDTO } from './dto/get-movie.dto';
 
 @Controller('movies')

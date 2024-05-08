@@ -4,7 +4,7 @@ import { IsCountryCode } from "./decorators/isCountryCode";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateMovieDto {
-    @ApiProperty()
+    @ApiProperty({type: 'jwt_token'})
     @IsJWT()
     access_token: string
 
@@ -23,15 +23,15 @@ export class CreateMovieDto {
     @IsString()
     original_title: string
 
-    @ApiProperty()
+    @ApiProperty({type: "string(ISO 639-1)"})
     @Validate(IsLanguageCode)
     language_code: string
 
-    @ApiProperty()
+    @ApiProperty({type: "string(ISO 639-1)"})
     @Validate(IsLanguageCode)
     original_language_code: string
 
-    @ApiProperty()
+    @ApiProperty({type: "string(ISO 3166-1 alpha-2)"})
     @Validate(IsCountryCode)
     country_code: string
 
@@ -39,16 +39,16 @@ export class CreateMovieDto {
     @IsNumberString()
     duration_in_minutes: string
 
-    @ApiProperty()
+    @ApiProperty({type: 'string(y/m/d)'})
     @IsDateString()
     release_date: string
 
     @ApiProperty()
     @IsArray()
-    @IsString({each: true})
+    @IsString({ each: true })
     genre: string[]
 
-    @ApiProperty()
+    @ApiProperty({ type: `G | PG | PG-13 | R | NC-17` })
     @IsIn(['G', 'PG', 'PG-13', 'R', 'NC-17'])
     rating: "G" | "PG" | "PG-13" | "R" | "NC-17"
 }

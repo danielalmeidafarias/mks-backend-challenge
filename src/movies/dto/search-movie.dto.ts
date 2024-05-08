@@ -4,17 +4,17 @@ import { IsLanguageCode } from "./decorators/isLanguageCode"
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
 
 export class SearchMovieBodyDTO {
-    @ApiProperty()
+    @ApiProperty({ type: 'jwt_token' })
     @IsJWT()
     access_token: string
 }
 
 export class SearchMovieQueryDTO {
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: 'uuid' })
     @IsUUID()
     user_id: string
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: "string(ISO 3166-1 alpha-2)"})
     @Validate(IsCountryCode)
     country_code: string
 
@@ -22,11 +22,11 @@ export class SearchMovieQueryDTO {
     @IsString()
     genre: string
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: "string(ISO 639-1)" })
     @Validate(IsLanguageCode)
     language_code: string
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: `G | PG | PG-13 | R | NC-17` })
     @IsIn(['G', 'PG', 'PG-13', 'R', 'NC-17'])
     rating: "G" | "PG" | "PG-13" | "R" | "NC-17"
 

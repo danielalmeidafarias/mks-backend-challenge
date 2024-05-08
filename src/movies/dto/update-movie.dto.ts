@@ -6,7 +6,7 @@ import { IsLanguageCode } from './decorators/isLanguageCode';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateMovieBodyDTO extends PartialType(CreateMovieDto) {
-    @ApiProperty()
+    @ApiProperty({ type: 'jwt_token' })
     @IsJWT()
     access_token: string
 
@@ -25,15 +25,15 @@ export class UpdateMovieBodyDTO extends PartialType(CreateMovieDto) {
     @MaxLength(700)
     synopsis: string
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: "string(ISO 639-1)" })
     @Validate(IsLanguageCode)
     language_code: string
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: "string(ISO 639-1)" })
     @Validate(IsLanguageCode)
     original_language_code: string
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: "string(ISO 3166-1 alpha-2)" })
     @Validate(IsCountryCode)
     country_code: string
 
@@ -41,22 +41,22 @@ export class UpdateMovieBodyDTO extends PartialType(CreateMovieDto) {
     @IsNumberString()
     duration_in_minutes: string
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: 'string(y/m/d)' })
     @IsDateString()
     release_date: string
 
     @ApiPropertyOptional()
     @IsArray()
-    @IsString({each: true})
+    @IsString({ each: true })
     genre: string[]
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: `G | PG | PG-13 | R | NC-17` })
     @IsIn(['G', 'PG', 'PG-13', 'R', 'NC-17'])
     rating: 'G' | 'PG' | 'PG-13' | 'R' | 'NC-17'
 }
 
 export class UpdateMovieParamDTO {
-    @ApiProperty()
+    @ApiProperty({ type: 'uuid' })
     @IsUUID()
     movie_id: string
 }
