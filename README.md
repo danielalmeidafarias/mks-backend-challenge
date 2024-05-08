@@ -4,7 +4,7 @@
 - [https://docs.docker.com/desktop/?_gl=1*nhnuxj*_ga*MjA1NDE1MzUzMC4xNzE1MDQ1NzYw*_ga_XJWPQMJYHQ*MTcxNTIwNTcwNi4zLjEuMTcxNTIwNTcxMy41My4wLjA.](https://www.docker.com/get-started/)
 
 ### Create your .env file in root folder:
-`
+
   SERVER_HOST=http://localhost:3000
   
   DB_HOST=localhost
@@ -19,7 +19,6 @@
   
   JWT_SECRET_REDIRECT=another_secret_key
 
-`
 
 ### Initializing docker 
 
