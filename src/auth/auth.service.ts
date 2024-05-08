@@ -50,7 +50,11 @@ export class AuthService {
                     expiresIn: '1h',
                 },
             )
-            return { access_token }
+
+            const refresh_token = this.jwtService.sign({ id, email }, {
+                expiresIn: '1d',
+            })
+            return { access_token, refresh_token }
         } catch (err){
             console.error(err)
             throw new UnauthorizedException()
