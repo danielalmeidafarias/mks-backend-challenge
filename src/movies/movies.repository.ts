@@ -1,7 +1,7 @@
 import { DataSource, Repository } from 'typeorm';
 import { Movie, MovieEntity } from './entities/movie.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SearchMovieDTO } from './dto/search-movie.dto';
+import { SearchMovieQueryDTO } from './dto/search-movie.dto';
 
 @Injectable()
 export class MoviesRepository {
@@ -53,13 +53,12 @@ export class MoviesRepository {
 
   async getOne(movie_id: string) {
     try {
-      return (
-        (await this.dataSource
-          .getRepository(MovieEntity)
-          .createQueryBuilder('movie')
-          .where('movie.id = :id', { id: movie_id })
-          .getOne()) ?? null
-      );
+      const movie = await this.dataSource
+        .getRepository(MovieEntity)
+        .createQueryBuilder('movie')
+        .where('movie.id = :id', { id: movie_id })
+        .getOne()
+      return movie
     } catch (err) {
       console.error(err);
       throw new HttpException(
@@ -69,7 +68,16 @@ export class MoviesRepository {
     }
   }
 
-  async search({ user_id, country_code, genre, language_code, rating, title }: Omit<SearchMovieDTO, 'access_token'>) {
+  async getUsersMovies(userId: string) {
+    try {
+      return this.dataSource.getRepository(MovieEntity).createQueryBuilder('movie').where('movie.userId = :userId', { userId }).getMany() ?? []
+    } catch (err) {
+      console.error(err)
+      throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async search({ user_id, country_code, genre, language_code, rating, title }: SearchMovieQueryDTO) {
     try {
       let functionString = `const moviesPromise = dataSource.getRepository(MovieEntity).createQueryBuilder('movie')`
 

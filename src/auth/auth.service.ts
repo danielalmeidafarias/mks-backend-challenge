@@ -14,8 +14,6 @@ export class AuthService {
     async signIn(email: string, passoword: string) {
         const user = await this.userRepository.findOneByEmail(email)
 
-        console.log(user)
-
         if (!user) {
             throw new HttpException(`There is no account with this email ${email}`, HttpStatus.BAD_REQUEST)
         }

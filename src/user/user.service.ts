@@ -46,11 +46,16 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    const user = await this.userRepository.findOneById(id)
+    try {
+      const user = await this.userRepository.findOneById(id)
 
-    const users_movies = await this.moviesRepository.search({ user_id: user.id, country_code: null, genre: null, language_code: null, rating: null, title: null, })
+      const users_movies = await this.moviesRepository.getUsersMovies(id)
 
-    return { user, users_movies }
+      return { user, users_movies }
+    } catch {
+      throw new HttpException('None user with this id was found', HttpStatus.BAD_REQUEST)
+    }
+
   }
 
   async findAll(nickname?: string) {
@@ -79,8 +84,6 @@ export class UserService {
 
     const user = await this.userRepository.getDetails(id)
 
-    console.log(password, new_password, user.password)
-
     await this.authService.verifyPassword(password, user.password)
 
     let updated_user: Partial<User> = {
@@ -91,7 +94,7 @@ export class UserService {
       if (prop === 'new_password') {
         updated_user['password'] = await this.authService.hashPassword(updateUserDto['new_password'])
       }
-      else if (updateUserDto[prop] !== user[prop] && prop !== 'access_token' && prop !== 'new_password') {
+      else if (updateUserDto[prop] !== user[prop] && prop !== 'access_token' && prop !== 'new_password' && prop !== 'password') {
         updated_user[prop] = updateUserDto[prop]
       }
     }
@@ -116,12 +119,14 @@ export class UserService {
   async remove({ access_token, password }: DeleteUserDTO) {
     const { id } = await this.authService.decodeToken(access_token)
 
-    const user = await this.userRepository.findOneById(id)
+    const user = await this.userRepository.getDetails(id)
 
     await this.authService.verifyPassword(password, user.password)
 
     await this.userRepository.delete(user.id)
 
-    return
+    return {
+      message: "Account deleted with success!"
+    }
   }
 }
