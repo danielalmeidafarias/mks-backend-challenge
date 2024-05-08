@@ -4,13 +4,17 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Un
 export interface IUserContructorParameter {
     email: string,
     password: string
-    id?: string
+    nickname: string,
+    id?: string,
 }
 
 @Entity({name: 'user'})
 export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string
+
+    @Column({ unique: true })
+    nickname: string
 
     @Column()
     @Unique('email', ['email'])
@@ -19,7 +23,7 @@ export class UserEntity {
     @Column()
     password: string
 
-    @OneToMany(() => MovieEntity, movie => movie.user_id)
+    @OneToMany(() => MovieEntity, movie => movie.user)
     movies: MovieEntity[]
 
     @CreateDateColumn()
@@ -30,10 +34,11 @@ export class UserEntity {
 }
 
 export class User extends UserEntity {
-    constructor({ email, password, id }: IUserContructorParameter) {
+    constructor({ email, password, nickname,id }: IUserContructorParameter) {
         super()
         this.email = email
         this.password = password
+        this.nickname = nickname
 
         if (id) {
             this.id = id

@@ -24,38 +24,82 @@ export class UserRepository {
         }
     }
 
-    async findOneById(id: string) {
+    async findOneByNickname(nickname: string) {
         try {
-            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user').select('user.id').from(User, 'user').where("user.id = :id", { id }).getOne()
+            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user').where("user.nickname = :nickname", { nickname }).getOne()
             return user
         } catch (err) {
-            console.error(err)
-            throw new HttpException('The access_token is invalid', HttpStatus.BAD_REQUEST)
+            throw new HttpException('An error occured when trying to find the user, please try again later', HttpStatus.BAD_REQUEST)
         }
     }
 
-    async findAll() {
+    async findOneById(id: string) {
         try {
-            const users = await this.dataSource.getRepository(UserEntity)
-                .createQueryBuilder('users')
-                .select('user.id')
-                .from(User, 'user')
-                .orderBy('user.created_at', 'DESC')
-                .getMany()
-            return users
+            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user_by_id').select('user.id').addSelect('user.nickname').from(UserEntity, 'user').where("user.id = :id", { id }).getOneOrFail()
+            return user
         } catch (err) {
             console.error(err)
             throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async update(user: User) {
-        try {
-            const new_user = this.dataSource.getRepository(UserEntity).createQueryBuilder('update_user').where("user.id =: id", { id: user.id }).update({
-                email: user.email,
-                password: user.password,
-            }).execute()
+    async findAll(nickname?: string) {
+        if (nickname) {
+            try {
+                const user = await this.dataSource
+                    .getRepository(UserEntity)
+                    .createQueryBuilder()
+                    .from(UserEntity, 'user')
+                    .select('user.id')
+                    .addSelect('user.nickname')
+                    .where("user.nickname ~* :nickname", { nickname })
+                    .orderBy('user.created_at', 'DESC')
+                    .getMany()
+                return user
+            } catch (err) {
+                console.error(err)
+                throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+            }
+        }
+        else {
+            try {
+                const users = await this.dataSource.getRepository(UserEntity)
+                    .createQueryBuilder('users')
+                    .select('user.id')
+                    .addSelect('user.nickname')
+                    .from(UserEntity, 'user')
+                    .orderBy('user.created_at', 'DESC')
+                    .getMany()
+                return users
+            } catch (err) {
+                console.error(err)
+                throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+            }
+        }
+    }
 
+    async getDetails(id: string) {
+        try {
+            const user = await this.dataSource
+            .getRepository(UserEntity)
+            .createQueryBuilder()
+            .where("id = :id", { id })
+            .getOne()
+            return user
+        } catch (err) {
+            console.error(err)
+            throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async update(user: Partial<User>) {
+        try {
+            await this.dataSource
+                .getRepository(UserEntity)
+                .createQueryBuilder('users')
+                .where("id = :id", { id: user.id })
+                .update(user)
+                .execute()
         } catch (err) {
             console.error(err)
             throw new HttpException('An error occured when updating the user, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -64,8 +108,7 @@ export class UserRepository {
 
     async delete(id: string) {
         try {
-            this.dataSource.getRepository(UserEntity).createQueryBuilder('delete_user').where("user.id = :id", { id }).delete()
-
+            this.dataSource.getRepository(UserEntity).createQueryBuilder('user').delete().where("id = :id", { id }).execute()
         } catch (err) {
             console.error(err)
             throw new HttpException('An error occured when deleting the user, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
