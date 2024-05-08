@@ -1,7 +1,7 @@
 import { DataSource, Repository } from 'typeorm';
 import { Movie, MovieEntity } from './entities/movie.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SearchMovieDTO } from './dto/search-movie.dto';
+import { SearchMovieQueryDTO } from './dto/search-movie.dto';
 
 @Injectable()
 export class MoviesRepository {
@@ -69,7 +69,7 @@ export class MoviesRepository {
     }
   }
 
-  async search({ user_id, country_code, genre, language_code, rating, title }: Omit<SearchMovieDTO, 'access_token'>) {
+  async search({ user_id, country_code, genre, language_code, rating, title }: SearchMovieQueryDTO) {
     try {
       let functionString = `const moviesPromise = dataSource.getRepository(MovieEntity).createQueryBuilder('movie')`
 

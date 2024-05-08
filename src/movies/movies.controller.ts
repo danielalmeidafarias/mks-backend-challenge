@@ -1,13 +1,16 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Inject, ParseUUIDPipe, Query, UseInterceptors } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
+import { UpdateMovieBodyDTO } from './dto/update-movie.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { DeleteMovieDTO } from './dto/delete-movie.dto';
-import { SearchMovieDTO } from './dto/search-movie.dto';
+import { DeleteMovieBodyDTO } from './dto/delete-movie.dto';
+import { SearchMovieBodyDTO, SearchMovieQueryDTO } from './dto/search-movie.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ApiBody, ApiOAuth2, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { GetMovieBodyDTO } from './dto/get-movie.dto';
 
 @Controller('movies')
+@ApiTags('Movies')
 export class MoviesController {
   constructor(@Inject(MoviesService) private readonly moviesService: MoviesService) { }
 
@@ -20,7 +23,7 @@ export class MoviesController {
   @UseGuards(AuthGuard)
   @UseInterceptors(CacheInterceptor)
   @Get()
-  async search(@Body() { access_token }: Pick<SearchMovieDTO, 'access_token'>, @Query() moviesFilter: Omit<SearchMovieDTO, 'access_token'>) {
+  async search(@Body() { access_token }: SearchMovieBodyDTO, @Query() moviesFilter: SearchMovieQueryDTO) {
     console.log('getting from database')
     return this.moviesService.search(moviesFilter);
   }
@@ -28,19 +31,19 @@ export class MoviesController {
   @UseGuards(AuthGuard)
   @UseInterceptors(CacheInterceptor)
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Body() access_token: string) {
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string, @Body() { access_token }: GetMovieBodyDTO) {
     return this.moviesService.findOne(id);
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  async update(@Param('id', new ParseUUIDPipe()) movie_id: string, @Body() updateMovieBody: Omit<UpdateMovieDto, 'movie_id'>) {
+  async update(@Param('id', new ParseUUIDPipe()) movie_id: string, @Body() updateMovieBody: UpdateMovieBodyDTO) {
     return this.moviesService.update(movie_id, updateMovieBody);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async remove(@Param('id', new ParseUUIDPipe()) movie_id: string, @Body() { access_token }: Pick<DeleteMovieDTO, 'access_token'>) {
+  async remove(@Param('id', new ParseUUIDPipe()) movie_id: string, @Body() { access_token }: DeleteMovieBodyDTO) {
     return this.moviesService.remove(movie_id, access_token);
   }
 }
