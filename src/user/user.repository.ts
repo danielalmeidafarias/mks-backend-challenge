@@ -35,7 +35,7 @@ export class UserRepository {
 
     async findOneById(id: string) {
         try {
-            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user_by_id').select('user.id').addSelect('user.nickname').from(UserEntity, 'user').where("user.id = :id", { id }).getOne()
+            const user = await this.dataSource.getRepository(UserEntity).createQueryBuilder('user_by_id').select('user.id').addSelect('user.nickname').from(UserEntity, 'user').where("user.id = :id", { id }).getOneOrFail()
             return user
         } catch (err) {
             console.error(err)
@@ -108,7 +108,7 @@ export class UserRepository {
 
     async delete(id: string) {
         try {
-            this.dataSource.getRepository(UserEntity).createQueryBuilder('delete_user').where("user.id = :id", { id }).delete()
+            this.dataSource.getRepository(UserEntity).createQueryBuilder('user').delete().where("id = :id", { id }).execute()
         } catch (err) {
             console.error(err)
             throw new HttpException('An error occured when deleting the user, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)

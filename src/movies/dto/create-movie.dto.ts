@@ -4,7 +4,7 @@ import { IsCountryCode } from "./decorators/isCountryCode";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateMovieDto {
-    @ApiProperty({type: 'jwt_token'})
+    @ApiProperty({example: 'jwt_token'})
     @IsJWT()
     access_token: string
 

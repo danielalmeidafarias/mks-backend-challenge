@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsJWT, IsUUID } from "class-validator";
 
 export class GetUserBodyDTO {
-    @ApiProperty({type: 'jwt_token'})
+    @ApiProperty({example: 'jwt_token'})
     @IsJWT()
     access_token: string
 }

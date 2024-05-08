@@ -71,7 +71,16 @@ export class MoviesService {
   }
 
   async findOne(movie_id: string) {
-    return await this.movieRepository.getOne(movie_id);
+    const movie = await this.movieRepository.getOne(movie_id);
+
+    if (!movie) {
+      throw new HttpException(
+        'movie_id does not correspond to any movie',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else {
+      return movie
+    }
   }
 
   async update(
@@ -118,13 +127,7 @@ export class MoviesService {
 
     const user = await this.userRepository.findOneById(user_id);
 
-    console.log({ user });
-
     const movie = await this.movieRepository.getOne(movie_id);
-
-    console.log({ movie });
-
-    console.log({ user_id });
 
     if (!movie || movie.user_id !== user_id) {
       throw new UnauthorizedException();

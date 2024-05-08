@@ -53,19 +53,27 @@ export class MoviesRepository {
 
   async getOne(movie_id: string) {
     try {
-      return (
-        (await this.dataSource
-          .getRepository(MovieEntity)
-          .createQueryBuilder('movie')
-          .where('movie.id = :id', { id: movie_id })
-          .getOne()) ?? null
-      );
+      const movie = await this.dataSource
+        .getRepository(MovieEntity)
+        .createQueryBuilder('movie')
+        .where('movie.id = :id', { id: movie_id })
+        .getOne()
+      return movie
     } catch (err) {
       console.error(err);
       throw new HttpException(
         'Something went wrong, please try again later',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async getUsersMovies(userId: string) {
+    try {
+      return this.dataSource.getRepository(MovieEntity).createQueryBuilder('movie').where('movie.userId = :userId', { userId }).getMany() ?? []
+    } catch (err) {
+      console.error(err)
+      throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 

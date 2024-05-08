@@ -3,7 +3,7 @@ import { CreateUserDto } from './create-user.dto';
 import { IsEmail, IsJWT, IsOptional, IsString, IsStrongPassword } from 'class-validator';
 
 export class UpdateUserDto {
-    @ApiProperty({ type: "jwt_token" })
+    @ApiProperty({ example: "jwt_token" })
     @IsJWT()
     access_token: string
 

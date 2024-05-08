@@ -6,7 +6,7 @@ import { IsLanguageCode } from './decorators/isLanguageCode';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateMovieBodyDTO extends PartialType(CreateMovieDto) {
-    @ApiProperty({ type: 'jwt_token' })
+    @ApiProperty({ example: 'jwt_token' })
     @IsJWT()
     access_token: string
 
