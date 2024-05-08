@@ -8,6 +8,9 @@ import { UserRepository } from "src/user/user.repository";
 export class AuthService {
     constructor(@Inject(JwtService) private jwtService: JwtService, private userRepository: UserRepository) { }
 
+    // Criar autenticação de email para a criação de conta
+    // Adicionar recuperação de senha
+
     async signIn(email: string, passoword: string) {
         const user = await this.userRepository.findOneByEmail(email)
 
@@ -38,7 +41,7 @@ export class AuthService {
             throw new UnauthorizedException();
         }
 
-        return { id: decodedToken.sub, email: decodedToken.email };
+        return { id: decodedToken.id, email: decodedToken.email };
     }
 
     async getAccessToken(refresh_token: string) {
@@ -50,8 +53,8 @@ export class AuthService {
                     expiresIn: '1h',
                 },
             )
-            return { access_token }
-        } catch (err){
+            return { access_token, refresh_token }
+        } catch (err) {
             console.error(err)
             throw new UnauthorizedException()
         }
@@ -59,11 +62,12 @@ export class AuthService {
 
     async getRefreshToken(id: string, email: string) {
         try {
+            const refresh_token = this.jwtService.sign({ id, email }, {
+                expiresIn: '1d',
+            })
             return {
-                refresh_token: this.jwtService.sign({ id, email }, {
-                    expiresIn: '1d',
-                })
-            };
+                refresh_token
+            }
         } catch {
             throw new UnauthorizedException()
         }
@@ -76,7 +80,7 @@ export class AuthService {
     }
 
     async verifyPassword(password: string, database_hashed_password: string) {
-        if (!compare(password, database_hashed_password)) {
+        if (! await compare(password, database_hashed_password)) {
             throw new UnauthorizedException()
         }
     }

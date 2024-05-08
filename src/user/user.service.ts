@@ -5,12 +5,14 @@ import { User } from './entities/user.entity';
 import { UserRepository } from "./user.repository";
 import { AuthService } from 'src/auth/auth.service';
 import { DeleteUserDTO } from './dto/delete-user.dto';
+import { MoviesRepository } from 'src/movies/movies.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(UserRepository) private userRepository: UserRepository,
     @Inject(AuthService) private authService: AuthService,
+    @Inject(MoviesRepository) private moviesRepository: MoviesRepository
   ) { }
 
   private async verifyThereIsNoUserWithEmail(email: string) {
@@ -21,12 +23,22 @@ export class UserService {
     }
   }
 
-  async create({ email, password }: CreateUserDto) {
+  private async verifyThereIsNoUserWithNickname(nickname: string) {
+    const already_user = await this.userRepository.findOneByNickname(nickname)
+
+    if (already_user) {
+      throw new HttpException("There is an user with this nickname already", HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  async create({ email, password, nickname }: CreateUserDto) {
     await this.verifyThereIsNoUserWithEmail(email)
+
+    await this.verifyThereIsNoUserWithNickname(nickname)
 
     const hashed_password = await this.authService.hashPassword(password)
 
-    const { id } = (await this.userRepository.create(new User({email, password: hashed_password}))).identifiers[0]
+    const { id } = (await this.userRepository.create(new User({ email, password: hashed_password, nickname }))).identifiers[0]
 
     const { refresh_token } = await this.authService.getRefreshToken(id, email)
 
@@ -34,45 +46,87 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    const user = await this.userRepository.findOneById(id)
+    try {
+      const user = await this.userRepository.findOneById(id)
 
-    // Adicionar depois os filmes que esse usuário registrou
-    return user
+      const users_movies = await this.moviesRepository.getUsersMovies(id)
+
+      return { user, users_movies }
+    } catch {
+      throw new HttpException('None user with this id was found', HttpStatus.BAD_REQUEST)
+    }
+
   }
 
+  async findAll(nickname?: string) {
+    const users = await this.userRepository.findAll(nickname)
 
-  async findAll() {
-    const users = await this.userRepository.findAll()
+    if (users.length < 1) {
+      throw new HttpException('None user with this nickname was found', HttpStatus.BAD_REQUEST)
+    }
 
     return users
   }
 
-  async update({ access_token, email, password }: UpdateUserDto) {
+  async getUserDetails(access_token: string) {
     const { id } = await this.authService.decodeToken(access_token)
 
-    const user = await this.userRepository.findOneById(id)
+    const user = await this.userRepository.getDetails(id)
 
-    const hashed_password = password ? await this.authService.hashPassword(password) : user.password
+    return user
 
-    const update_user_params = {
-      email: email && email !== user.email ? email : user.email,
-      password: password && hashed_password !== user.password ? hashed_password : user.password,
+  }
+
+  async update(updateUserDto: UpdateUserDto) {
+    const { access_token, email, nickname, password, new_password } = updateUserDto
+
+    const { id } = await this.authService.decodeToken(access_token)
+
+    const user = await this.userRepository.getDetails(id)
+
+    await this.authService.verifyPassword(password, user.password)
+
+    let updated_user: Partial<User> = {
+      id,
     }
 
-    const updated_user = new User({email: update_user_params.email, password: update_user_params.password, id: user.id})
+    for (const prop in updateUserDto) {
+      if (prop === 'new_password') {
+        updated_user['password'] = await this.authService.hashPassword(updateUserDto['new_password'])
+      }
+      else if (updateUserDto[prop] !== user[prop] && prop !== 'access_token' && prop !== 'new_password' && prop !== 'password') {
+        updated_user[prop] = updateUserDto[prop]
+      }
+    }
+
+    if (updated_user.movies) {
+      await this.verifyThereIsNoUserWithEmail(email)
+    }
+
+    if (updated_user.nickname) {
+      await this.verifyThereIsNoUserWithNickname(nickname)
+    }
+
+    if (Object.keys(updated_user).length < 2) {
+      throw new HttpException('None change was requested', HttpStatus.BAD_REQUEST)
+    }
 
     await this.userRepository.update(updated_user)
+
+    return await this.userRepository.getDetails(id)
   }
 
   async remove({ access_token, password }: DeleteUserDTO) {
     const { id } = await this.authService.decodeToken(access_token)
 
-    const user = await this.userRepository.findOneById(id)
+    const user = await this.userRepository.getDetails(id)
 
     await this.authService.verifyPassword(password, user.password)
 
     await this.userRepository.delete(user.id)
 
-    return
+    return {
+      message: "Account deleted with success!"
+    }
   }
 }
