@@ -1,10 +1,20 @@
 ## Prerequisites
 
-### Download and install docker: 
+### Git
+- https://git-scm.com/downloads
+
+### nvm and node:
+- https://nodejs.org/en/download
+
+### docker: 
 - https://www.docker.com/get-started/
 
-### Create your .env file in root folder:
+### Clone this repository 
+```bash
+  $ git clone https://github.com/danielalmeidafarias/mks-backend-challenge.git
+```
 
+### Create your .env file in root folder:
 ```
   DB_HOST=""
   DB_USERNAME=""
@@ -16,7 +26,6 @@
 ```
 
 ### Initializing db and redis
-
 ```bash
 $ docker compose up -d
 ```
@@ -25,24 +34,23 @@ $ docker compose up -d
   - If it's not, you can modify your docker-compose.yaml file
 
 ## Instaling pm2(for production only)
-
 ```bash
-  $ npm install -g pm2      
-´``
+  $ npm install -g pm2  
+```
 
 ## Installation
-
 ```bash
-$ npm install
+    $ npm install
 ```
 
 ## Running the app
 
-### Development
+1. Development
 ```bash
 $ npm run start:dev
 ```
-### Production
+
+2. Production
 ```bash
 # production mode
 $ npm install -g pm2
