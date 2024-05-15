@@ -9,7 +9,7 @@
 ### docker: 
 - https://www.docker.com/get-started/
 
-## pm2 (for production only)
+### pm2 (for production only)
 ```bash
   $ npm install -g pm2  
 ```
