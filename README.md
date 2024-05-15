@@ -34,9 +34,7 @@
 ```bash
 $ docker compose up -d
 ```
-* obs: 
-  - Make sure ports 5432, 6379 and 8081 are free
-  - If it's not, you can modify your compose.yml file
+* obs: Make sure ports 5432, 6379 and 8081 are free. If it's not, you can modify your compose.yml file
 
 ## Installation
 ```bash
