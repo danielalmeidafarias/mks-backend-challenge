@@ -1,7 +1,7 @@
 import { DataSource, Repository } from 'typeorm';
 import { Movie, MovieEntity } from './entities/movie.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SearchMovieDTO } from './dto/search-movie.dto';
+import { SearchMovieQueryDTO } from './dto/search-movie.dto';
 
 @Injectable()
 export class MoviesRepository {
@@ -25,7 +25,7 @@ export class MoviesRepository {
         .createQueryBuilder('movies')
         .where('movie.id = :id', { id: movie.id })
         .update(movie)
-        .execute(); 
+        .execute();
     } catch (err) {
       console.error(err);
       throw new HttpException(
@@ -53,13 +53,12 @@ export class MoviesRepository {
 
   async getOne(movie_id: string) {
     try {
-      return (
-        (await this.dataSource
-          .getRepository(MovieEntity)
-          .createQueryBuilder('movie')
-          .where('movie.id = :id', { id: movie_id })
-          .getOne()) ?? null
-      );
+      const movie = await this.dataSource
+        .getRepository(MovieEntity)
+        .createQueryBuilder('movie')
+        .where('movie.id = :id', { id: movie_id })
+        .getOne()
+      return movie
     } catch (err) {
       console.error(err);
       throw new HttpException(
@@ -69,7 +68,16 @@ export class MoviesRepository {
     }
   }
 
-  async search({ user_id, country_code, genre, language_code, rating, title }: Omit<SearchMovieDTO, 'access_token'>) {
+  async getUsersMovies(userId: string) {
+    try {
+      return this.dataSource.getRepository(MovieEntity).createQueryBuilder('movie').where('movie.userId = :userId', { userId }).getMany() ?? []
+    } catch (err) {
+      console.error(err)
+      throw new HttpException('Something went wrong, please try again later', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async search({ user_id, country_code, genre, language_code, rating, title }: SearchMovieQueryDTO) {
     try {
       let functionString = `const moviesPromise = dataSource.getRepository(MovieEntity).createQueryBuilder('movie')`
 
@@ -85,16 +93,20 @@ export class MoviesRepository {
       if (country_code) {
         functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.country_code = :country_code', { country_code: '${country_code}' })`)
       }
-      if (genre) {
-        functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.genre = :genre', { genre: '${genre}' })`)
-      }
       if (rating) {
         functionString = functionString.concat(`.${user_id ? 'andWhere' : 'where'}('movie.rating = :rating', { rating: '${rating}' })`)
       }
 
-      const movieSearchPromise = new Function('dataSource','MovieEntity', functionString.concat('.getMany() \n return moviesPromise'))
+      const movieSearchPromise = new Function('dataSource', 'MovieEntity', functionString.concat('.getMany() \n return moviesPromise'))
 
-      return await movieSearchPromise(this.dataSource, MovieEntity)
+      const movies: MovieEntity[] = await movieSearchPromise(this.dataSource, MovieEntity)
+
+      if (genre) {
+        return movies.filter(movie => movie.genre.includes(genre))
+      } else {
+        return movies
+      }
+
 
     } catch (err) {
       console.error(err)

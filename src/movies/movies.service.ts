@@ -6,14 +6,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
+import { UpdateMovieBodyDTO } from './dto/update-movie.dto';
 import { Repository } from 'typeorm';
 import { Movie, MovieEntity } from './entities/movie.entity';
 import { MoviesRepository } from './movies.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { UserRepository } from 'src/user/user.repository';
 import { PartialType } from '@nestjs/mapped-types';
-import { SearchMovieDTO } from './dto/search-movie.dto';
+import { SearchMovieQueryDTO } from './dto/search-movie.dto';
 
 @Injectable()
 export class MoviesService {
@@ -66,17 +66,26 @@ export class MoviesService {
     return await this.findOne(id);
   }
 
-  async search(moviesFilter: Omit<SearchMovieDTO, 'access_token'>) {
+  async search(moviesFilter: SearchMovieQueryDTO) {
     return await this.movieRepository.search(moviesFilter)
   }
 
   async findOne(movie_id: string) {
-    return await this.movieRepository.getOne(movie_id);
+    const movie = await this.movieRepository.getOne(movie_id);
+
+    if (!movie) {
+      throw new HttpException(
+        'movie_id does not correspond to any movie',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else {
+      return movie
+    }
   }
 
   async update(
     movie_id: string,
-    updateMovieDto: Omit<UpdateMovieDto, 'movie_id'>,
+    updateMovieDto: UpdateMovieBodyDTO,
   ) {
     const { id: user_id } = await this.authService.decodeToken(updateMovieDto.access_token);
 
@@ -118,13 +127,7 @@ export class MoviesService {
 
     const user = await this.userRepository.findOneById(user_id);
 
-    console.log({ user });
-
     const movie = await this.movieRepository.getOne(movie_id);
-
-    console.log({ movie });
-
-    console.log({ user_id });
 
     if (!movie || movie.user_id !== user_id) {
       throw new UnauthorizedException();

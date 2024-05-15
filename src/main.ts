@@ -11,7 +11,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('MKS Backend Challenge')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('MKS Backend Challenge')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -14,8 +14,6 @@ export class AuthService {
     async signIn(email: string, passoword: string) {
         const user = await this.userRepository.findOneByEmail(email)
 
-        console.log(user)
-
         if (!user) {
             throw new HttpException(`There is no account with this email ${email}`, HttpStatus.BAD_REQUEST)
         }
@@ -55,6 +53,9 @@ export class AuthService {
                     expiresIn: '1h',
                 },
             )
+            const refresh_token = this.jwtService.sign({ id, email }, {
+                expiresIn: '1d',
+            })
             return { access_token, refresh_token }
         } catch (err) {
             console.error(err)
