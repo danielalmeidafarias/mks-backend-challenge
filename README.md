@@ -40,7 +40,7 @@ $ docker compose up -d
 
 ## Installation
 ```bash
-    $ npm install
+$ npm install
 ```
 
 ## Running the app
@@ -58,3 +58,9 @@ $ npm run build
 $ pm2 run dist/main.js
 ```
 
+## Docs
+1. access
+  - http://35.198.27.144:3000/api
+3. or access postman documentation
+- https://documenter.getpostman.com/view/32616533/2sA3JQ5zsj
+4. or run it locally and access http://localhost:3000/api
