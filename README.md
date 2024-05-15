@@ -9,20 +9,25 @@
 ### docker: 
 - https://www.docker.com/get-started/
 
+## pm2 (for production only)
+```bash
+  $ npm install -g pm2  
+```
+
 ### Clone this repository 
 ```bash
   $ git clone https://github.com/danielalmeidafarias/mks-backend-challenge.git
 ```
 
-### Create your .env file in root folder:
+### Create your .env file in root folder and give it values:
 ```
-  DB_HOST=""
-  DB_USERNAME=""
-  DB_PASSWORD=""
-  DB_NAME=
-  JWT_SECRET_KEY=""
-  JWT_SECRET_REDIRECT=""
-  SERVER_HOST=""
+  DB_HOST=your db host
+  DB_USERNAME=your db username
+  DB_PASSWORD=your db password
+  DB_NAME=your db name
+  JWT_SECRET_KEY="a secret key for jwt"
+  JWT_SECRET_REDIRECT="another one"
+  SERVER_HOST=where your application is running (localhost:3000 if its in development)
 ```
 
 ### Initializing db and redis
@@ -31,12 +36,7 @@ $ docker compose up -d
 ```
 * obs: 
   - Make sure ports 5432, 6379 and 8081 are free
-  - If it's not, you can modify your docker-compose.yaml file
-
-## Instaling pm2(for production only)
-```bash
-  $ npm install -g pm2  
-```
+  - If it's not, you can modify your compose.yml file
 
 ## Installation
 ```bash
