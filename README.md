@@ -5,22 +5,17 @@
 
 ### Create your .env file in root folder:
 
-  SERVER_HOST=http://localhost:3000
-  
-  DB_HOST=localhost
-  
-  DB_USERNAME=your_postgres_user
-  
-  DB_PASSWORD=your_postgres_password
-  
-  DB_NAME=your_database_name
-  
-  JWT_SECRET_KEY=your_secret_key
-  
-  JWT_SECRET_REDIRECT=another_secret_key
+```
+  DB_HOST=""
+  DB_USERNAME=""
+  DB_PASSWORD=""
+  DB_NAME=
+  JWT_SECRET_KEY=""
+  JWT_SECRET_REDIRECT=""
+  SERVER_HOST=""
+```
 
-
-### Initializing docker 
+### Initializing db and redis
 
 ```bash
 $ docker compose up -d
@@ -28,6 +23,12 @@ $ docker compose up -d
 * obs: 
   - Make sure ports 5432, 6379 and 8081 are free
   - If it's not, you can modify your docker-compose.yaml file
+
+## Instaling pm2(for production only)
+
+```bash
+  $ npm install -g pm2      
+´``
 
 ## Installation
 
@@ -37,13 +38,15 @@ $ npm install
 
 ## Running the app
 
+### Development
 ```bash
-# development
-$ npm run start
-
-# watch mode
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
+### Production
+```bash
+# production mode
+$ npm install -g pm2
+$ npm run build
+$ pm2 run dist/main.js
+```
+
