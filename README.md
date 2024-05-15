@@ -19,7 +19,7 @@
   $ git clone https://github.com/danielalmeidafarias/mks-backend-challenge.git
 ```
 
-## Create your .env file in root folder and give it values:
+## Create your .env file in root folder and give it values
 ```
   DB_HOST=your db host
   DB_USERNAME=your db username
