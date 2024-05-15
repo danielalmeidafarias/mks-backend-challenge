@@ -1,6 +1,6 @@
 ## Prerequisites
 
-### Git
+### git
 - https://git-scm.com/downloads
 
 ### nvm and node:
@@ -14,12 +14,12 @@
   $ npm install -g pm2  
 ```
 
-### Clone this repository 
+## Clone this repository 
 ```bash
   $ git clone https://github.com/danielalmeidafarias/mks-backend-challenge.git
 ```
 
-### Create your .env file in root folder and give it values:
+## Create your .env file in root folder and give it values:
 ```
   DB_HOST=your db host
   DB_USERNAME=your db username
@@ -30,7 +30,7 @@
   SERVER_HOST=where your application is running (localhost:3000 if its in development)
 ```
 
-### Initializing db and redis
+## Initializing db and redis
 ```bash
 $ docker compose up -d
 ```
@@ -49,7 +49,6 @@ $ npm install
 ```bash
 $ npm run start:dev
 ```
-
 2. Production
 ```bash
 # production mode
@@ -59,8 +58,6 @@ $ pm2 run dist/main.js
 ```
 
 ## Docs
-1. access
-  - http://35.198.27.144:3000/api
-3. or access postman documentation
-- https://documenter.getpostman.com/view/32616533/2sA3JQ5zsj
+1. access http://35.198.27.144:3000/api
+3. or access postman documentation https://documenter.getpostman.com/view/32616533/2sA3JQ5zsj
 4. or run it locally and access http://localhost:3000/api
