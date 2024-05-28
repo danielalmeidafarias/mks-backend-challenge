@@ -56,6 +56,6 @@ $ pm2 run dist/main.js
 ```
 
 ## Docs
-1. access http://35.198.27.144:3000/api
+1. access https://vercelapimovies-danielalmeidafarias-projects.vercel.app/api/api
 3. or access postman documentation https://documenter.getpostman.com/view/32616533/2sA3JQ5zsj
 4. or run it locally and access http://localhost:3000/api
